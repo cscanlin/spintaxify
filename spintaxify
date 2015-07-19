@@ -1,0 +1,26 @@
+import random
+import itertools
+
+def spintaxify(string,spins=None,strings_list=[]):
+    begin_multichoice = string.find('{')
+    end_multichoice = string.find('}')
+
+    if end_multichoice > 0:
+        if begin_multichoice > 0:
+            strings_list += [[string[:begin_multichoice]]]
+        multi_choice_string = string[begin_multichoice+1:end_multichoice]
+        strings_list += [multi_choice_string.split('|')]
+    else:
+        strings_list += [[string]]
+
+    if string.find('{') > -1:
+        return spintaxify(string[end_multichoice+1:],spins,strings_list)
+    else:
+        results_list = [''.join(result) for result in list(itertools.product(*strings_list))]
+        if spins and spins < len(results_list):
+            return random.sample(results_list,spins)
+        else:
+            return results_list
+
+string = '{Hey|Hello|Hi} this is {spin syntax|spintax}{.|!|}'
+print spintaxify(string,spins=10)
